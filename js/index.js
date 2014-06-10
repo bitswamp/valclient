@@ -1,12 +1,26 @@
-var net = require('net');
-var fs = require('fs');
+var net = require('net'),
+	fs = require('fs'),
+	sjcl = require('sjcl');
 
 var $prompt = $('#prompt');
 var $output = $('#output');
 
+var $server = $('#server');
+var $port = $('#port');
 var $username = $('#username');
 var $password = $('#pw');
 var $connect = $("#connect-button");
+
+var config = null;
+if (fs.existsSync('./config.json')) {
+	config = require('./config.json');
+
+	$server.val(config.server || '');
+	$port.val(config.port || '');
+	$username.val(config.username || '');
+	if (config.password)
+		$password.val(sjcl.decrypt("test", config.password));
+}
 
 function allowConnect() {
 	if ($username.val().length && $password.val().length)
@@ -31,20 +45,27 @@ function pad (str, max, chr) {
   return str.length < max ? pad("" + chr + str, max) : str;
 }
 
-function login(data) {
-	console.log('login');
-	if (counter === 2) {
-		mud.write($('#username').val() + '\n');
-		console.log($('#username').val());
+function login(username, password) {
+	return function(data) {
+		if (counter === 2) {
+			console.log('Login: ');
+			mud.write(username + '\n');
+			console.log(username);
+		}
+		if (counter === 3)
+			mud.write(password + '\n');
+		if (counter === 4 && data.toString().indexOf('[Press ENTER to continue]') > -1)
+			mud.write('\n');
+		if (counter > 4) {
+			mud.removeListener('data', login);
+			console.log('Login done');
+		}
 	}
-	if (counter === 3)
-		mud.write($('#pw').val() + '\n');
-	if (counter === 4 && data.toString().indexOf('[Press ENTER to continue]') > -1)
-		mud.write('\n');
-	if (counter > 4) {
-		mud.removeListener('data', login);
-		console.log('removed');
-	}
+}
+
+function disconnected() {
+	display("*** Disconnected ***");
+	$('#connect-panel').slideDown();
 }
 
 function display(data) {
@@ -72,8 +93,10 @@ function display(data) {
 $('#connect-form').on("submit", function(e) {
 	e.preventDefault();
 	
-	var server = $('#server').val();
-	var port = $('#port').val();
+	var server = $server.val();
+	var port = $port.val();
+	var username = $username.val();
+	var password = $password.val();
 
 	mud = net.connect({
 		host: server,
@@ -83,9 +106,34 @@ $('#connect-form').on("submit", function(e) {
 		$prompt.focus();
 	})
 
+	config = {};
+	config.server = server;
+	config.port = port;
+	if ($("#remember").prop("checked")) {
+		config.username = username;
+		config.password = sjcl.encrypt("test", password);
+	} else {
+		setTimeout(function() {
+			$username.val('');
+			$password.val('');
+		}, 30 * 1000) // delete after 30s in case of timeouts
+	}
+
+	fs.writeFile('./config.json', JSON.stringify(config), function(err) {
+		if (err) console.log(err);
+		else console.log("Saved");
+	})
+
 	counter = 0;
 	mud.on('data', display);
-	mud.on('data', login);
+	mud.on('data', login(username, password));
+
+	mud.on('end', disconnected);
+	mud.on('close', disconnected);
+	mud.on('timeout', function() {
+		mud.end();
+		disconnected();
+	});
 });
 
 $('#prompt-form').on('submit', function(e) {
