@@ -1,0 +1,34 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ValClient</title>
+  <meta name="author" content="Ben MacLeod">
+  <link rel="stylesheet" href="css/style.css?v=1.0">
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <div id="connect-panel">
+  	<form id="connect-form">
+  	  <input type="text" id="server" name="server" placeholder="Server" value="asgards-honor.com" />
+  	  <input type="text" id="port" name="port" placeholder="Port" value="5454" />
+  	  <input type="text" id="username" name="username" placeholder="Username" />
+  	  <input type="password" id="pw" name="pw" placeholder="Password" />
+  	  <label>
+  	  	<input type="checkbox" /> Remember
+  	  </label>
+  	  <input type="submit" id="connect-button" value="Connect" disabled="disabled" />
+  	</form>
+  </div>
+  <div id="prompt-panel">
+  	<form id="prompt-form">
+      <span class="prompt-char">&gt;</span>
+  	  <input type="text" id="prompt" name="prompt" />
+  	</form>
+  </div>
+  <div id="output-panel"><div id="output"></div></div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

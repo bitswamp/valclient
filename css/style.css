@@ -1,0 +1,135 @@
+html, body {
+	margin: 0;
+	padding: 0;
+
+	background-color: #222;
+}
+
+body::-webkit-scrollbar { width: 0 !important }
+
+#connect-panel {
+	width: 100%;
+	position: fixed;
+	top: 0;
+}
+
+#connect-form {
+	display: block;
+	width: 780px;
+	overflow: auto;
+	margin: 0 auto;
+	padding: 10px;
+	background-color: #ddd;
+}
+
+#port {
+	width: 80px;
+	margin-left: 2px;
+}
+
+#prompt-panel {
+	width: 100%;
+	position: fixed;
+	bottom: 0;
+	font-family: 'Ubuntu Mono';
+}
+
+#prompt-form {
+	display: block;
+	width: 780px;
+	margin: 0 auto;
+	padding: 10px;
+	background-color: #ddd;
+}
+
+#prompt {
+	display: inline-block;
+	width: 700px;
+
+	border: 0;
+	outline: 0;
+	background-color: #eee;
+	font-family: 'Ubuntu Mono';
+	line-height: 20px;
+	font-size: 14px;
+	margin-left: 0;
+}
+
+.prompt-char {
+	display: inline-block;
+	line-height: 22px;
+	font-family: 'Ubuntu Mono';
+	font-weight: bold;
+	font-size: 20px;
+}
+
+#output-panel {
+	width: 100%;
+	font-family: 'Ubuntu Mono';
+	color: #fff;
+}
+
+pre {
+	display: inline-block;
+	margin: 0;
+	margin-bottom: 6px;
+	margin-left: 60px;
+	min-width: 740px;
+	font-family: 'Ubuntu Mono';
+}
+
+pre::before {
+	display: inline-block;
+	width: 60px;
+	margin-left: -60px;
+	content: attr(data-time);
+	color: #aaa;
+}
+
+input[type="text"], input[type="password"] {
+	display: inline-block;
+	padding: 2px 4px;
+	margin: 2px;
+	/*margin-right: 7px;
+	float: left;*/
+}
+
+label {
+	display: inline-block;
+	margin: 2px;
+	font-family: sans-serif;
+	font-size: 12px;
+}
+
+label input[type="checkbox"] {
+	vertical-align: top;
+	margin-top: 1px;
+	margin-left: 2px;
+}
+
+input[type="submit"] {
+	display: inline-block;
+	margin: 1px 4px;
+	margin-top: 0;
+	padding: 5px 10px;
+	line-height: 16px;
+	border-radius: 0;
+	background-image: none;
+	background-color: #ace;
+	border: 0;
+	cursor: pointer;
+	text-transform: uppercase;
+	font-size: 11px;
+}
+input:disabled {
+	background-color: #ccc;
+	cursor: default;
+}
+
+#output {
+	padding-bottom: 48px;
+}
+
+.odd {
+	color: #dfd;
+}
