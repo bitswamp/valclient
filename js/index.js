@@ -11,6 +11,8 @@ var $username = $('#username');
 var $password = $('#pw');
 var $connect = $("#connect-button");
 
+var discod = false;
+
 var config = null;
 if (fs.existsSync('./config.json')) {
 	config = require('./config.json');
@@ -18,8 +20,11 @@ if (fs.existsSync('./config.json')) {
 	$server.val(config.server || '');
 	$port.val(config.port || '');
 	$username.val(config.username || '');
-	if (config.password)
+	if (config.password) {
 		$password.val(sjcl.decrypt("test", config.password));
+		$("#remember").prop("checked", true);
+		allowConnect();
+	}
 }
 
 function allowConnect() {
@@ -35,7 +40,9 @@ for (var i in inputEvents) {
 	$password.on(inputEvents[i], allowConnect);
 }
 
-var mud, counter;
+var mud;
+var counter = 0;
+var sessionCounter = 0;
 var scroll = false;
 
 function pad (str, max, chr) {
@@ -64,29 +71,38 @@ function login(username, password) {
 }
 
 function disconnected() {
-	display("*** Disconnected ***");
-	$('#connect-panel').slideDown();
+	if (!discod) {
+		console.log('Disconnected');
+		display('*** Disconnected ***');
+		$('#connect-panel').slideDown();
+		discod = true;
+	}
 }
 
 function display(data) {
-	counter++;
-	var msg = document.createElement('pre');
-	var date = new Date();
-	var time = '' + pad(date.getHours(), 2, 0) + ':' + pad(date.getMinutes(), 2, 0);
-	msg.id = counter;
-	if (counter % 2)
-		msg.className = 'odd';
+	// format message and suppress if empty
 	data = data.toString().split('\n');
-	data.pop();
+	// strip prompt
+	if (data[data.length-1].indexOf('>') > -1) data.pop();
 	var lines = data.length;
 	data = data.join('\n').trim();
 	if (!data.length) return;
+
+	// timestamp
+	var date = new Date();
+	var time = '' + pad(date.getHours(), 2, 0) + ':' + pad(date.getMinutes(), 2, 0);
+
+	counter++;
+	var msg = document.createElement('pre');
+	msg.id = '' + sessionCounter + '-' + counter;
+	if (counter % 2) msg.className = 'odd';
+
 	$(msg).attr('data-time', time)
 		.attr('data-lines', lines)
 		.html(data).appendTo($output);
 	if (scroll) {
 		console.log('scroll');
-		$('html, body').animate({ scrollTop: $("#" + counter).offset().top }, 200);
+		$('html, body').animate({ scrollTop: $("#" + msg.id).offset().top }, 200);
 	}
 }
 
@@ -124,7 +140,11 @@ $('#connect-form').on("submit", function(e) {
 		else console.log("Saved");
 	})
 
+	discod = false;
+
 	counter = 0;
+	sessionCounter++;
+
 	mud.on('data', display);
 	mud.on('data', login(username, password));
 
@@ -134,13 +154,43 @@ $('#connect-form').on("submit", function(e) {
 		mud.end();
 		disconnected();
 	});
+
+	$prompt.focus();
+});
+
+var cursor = 0;
+var history = [];
+
+$('#prompt-form').on('click', function(e) {
+	$prompt.focus();
 });
 
 $('#prompt-form').on('submit', function(e) {
 	e.preventDefault();
-	mud.write($prompt.val() + '\n');
+
+	var cmd = $prompt.val();
+	mud.write(cmd + '\n');
+	history.unshift(cmd);
+	if (history.length > 100)
+		history.pop();
+
 	$prompt.val('');
-})
+	cursor = 0;
+});
+
+$prompt.jkey('up, down', function(key) {
+	//console.log(key);
+	var direction = key === 'up' ? 1 : -1;
+	cursor = Math.max(cursor + direction, 1);
+	cursor = Math.min(cursor, history.length);
+	//console.log(cursor);
+	$prompt.val(history[cursor-1]);
+});
+
+$prompt.jkey('esc', function() {
+	$prompt.val('');
+	cursor = 0;
+});
 
 $(window).scroll(function() {
   if($(window).scrollTop() + $(window).height() > $(document).height() - 20) {

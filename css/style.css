@@ -7,6 +7,21 @@ html, body {
 
 body::-webkit-scrollbar { width: 0 !important }
 
+#alert {
+	display: none;
+	text-align: center;
+	text-transform: uppercase;
+	font-family: sans-serif;
+	font-size: 12px;
+	color: white;
+	color: #fdd;
+}
+
+.error {
+	background-color: red;
+	color: #fdd;	
+}
+
 #connect-panel {
 	width: 100%;
 	position: fixed;
