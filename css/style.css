@@ -34,7 +34,7 @@ body::-webkit-scrollbar { width: 0 !important }
 	overflow: auto;
 	margin: 0 auto;
 	padding: 10px;
-	background-color: #ddd;
+	background-color: #bbb;
 }
 
 #port {
@@ -47,6 +47,7 @@ body::-webkit-scrollbar { width: 0 !important }
 	position: fixed;
 	bottom: 0;
 	font-family: 'Ubuntu Mono';
+	background-color: #222;
 }
 
 #prompt-form {
@@ -54,7 +55,6 @@ body::-webkit-scrollbar { width: 0 !important }
 	width: 780px;
 	margin: 0 auto;
 	padding: 10px;
-	background-color: #ddd;
 }
 
 #prompt {
@@ -63,19 +63,23 @@ body::-webkit-scrollbar { width: 0 !important }
 
 	border: 0;
 	outline: 0;
-	background-color: #eee;
-	font-family: 'Ubuntu Mono';
+
 	line-height: 20px;
 	font-size: 14px;
 	margin-left: 0;
+
+	font-family: 'Ubuntu Mono';
+	background-color: #333;
+	color: #66d9ef;
 }
 
 .prompt-char {
 	display: inline-block;
 	line-height: 22px;
-	font-family: 'Ubuntu Mono';
+	font-family: sans-serif;
 	font-weight: bold;
-	font-size: 20px;
+	font-size: 14px;
+	color: #66d9ef;
 }
 
 #output-panel {
@@ -130,7 +134,7 @@ input[type="submit"] {
 	line-height: 16px;
 	border-radius: 0;
 	background-image: none;
-	background-color: #ace;
+	background-color: #a6e22e;
 	border: 0;
 	cursor: pointer;
 	text-transform: uppercase;
